@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
   afterNextRender,
   computed,
@@ -25,12 +26,14 @@ export class MapView {
   private readonly store = inject(ReportsStore);
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly mapEl = viewChild.required<ElementRef<HTMLDivElement>>('map');
 
   /** El mapa solo existe en el navegador. */
   private map: MapLibreMap | null = null;
   private markers: Marker[] = [];
+  private resizeObs?: ResizeObserver;
   private readonly ready = signal(false);
 
   protected readonly reports = this.store.activeReports;
@@ -60,7 +63,20 @@ export class MapView {
         zoom: 13,
         attributionControl: { compact: true },
       });
-      this.map.on('load', () => this.ready.set(true));
+      this.map.on('load', () => {
+        this.ready.set(true);
+        this.map?.resize();
+      });
+
+      // El contenedor usa `dvh`/layout que puede resolverse después del init;
+      // mantiene el lienzo del tamaño correcto (evita el mapa "cortado").
+      this.resizeObs = new ResizeObserver(() => this.map?.resize());
+      this.resizeObs.observe(this.mapEl().nativeElement);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.resizeObs?.disconnect();
+      this.map?.remove();
     });
 
     // Re-pinta los marcadores cuando cambian los reportes (signals puros).

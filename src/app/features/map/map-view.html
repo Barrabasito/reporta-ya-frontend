@@ -1,6 +1,7 @@
 <section class="relative h-[calc(100dvh-8rem)] w-full md:h-[calc(100dvh-4rem)]">
-  <!-- Contenedor del mapa -->
-  <div #map class="absolute inset-0"></div>
+  <!-- Contenedor del mapa (h-full: MapLibre fuerza position:relative, así que
+       inset-0 no sirve para dimensionar; usamos alto/ancho completos). -->
+  <div #map class="h-full w-full"></div>
 
   <!-- Panel flotante de resumen -->
   <div
