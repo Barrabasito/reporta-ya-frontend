@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
+import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,10 @@ import { RouterOutlet, RouterLink } from '@angular/router';
 })
 export class App {
   protected readonly brand = signal('Reporta Ya');
+  private readonly themeService = inject(ThemeService);
+
+  protected readonly isDark = this.themeService.isDark;
+  protected toggleTheme(): void {
+    this.themeService.toggle();
+  }
 }

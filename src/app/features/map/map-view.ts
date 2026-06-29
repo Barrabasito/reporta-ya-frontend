@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import type { Map as MapLibreMap, Marker } from 'maplibre-gl';
+import type { Map as MapLibreMap, Marker, StyleSpecification } from 'maplibre-gl';
 import { ReportsStore } from '../../core/reports.store';
-import { DEFAULT_CENTER } from '../../core/geo';
-import { ageColor, daysSince } from '../../core/geo';
+import { DEFAULT_CENTER, ageColor, daysSince } from '../../core/geo';
 import { CATEGORY_META, Report } from '../../core/models/report';
+import { ThemeService, Theme } from '../../core/theme.service';
 
 @Component({
   selector: 'app-map-view',
@@ -24,6 +24,7 @@ import { CATEGORY_META, Report } from '../../core/models/report';
 export class MapView {
   private readonly store = inject(ReportsStore);
   private readonly router = inject(Router);
+  private readonly themeService = inject(ThemeService);
 
   private readonly mapEl = viewChild.required<ElementRef<HTMLDivElement>>('map');
 
@@ -46,7 +47,7 @@ export class MapView {
       const { Map } = await import('maplibre-gl');
       this.map = new Map({
         container: this.mapEl().nativeElement,
-        style: OSM_STYLE,
+        style: buildStyle(this.themeService.theme()),
         center: [DEFAULT_CENTER.lng, DEFAULT_CENTER.lat],
         zoom: 13,
         attributionControl: { compact: true },
@@ -59,6 +60,14 @@ export class MapView {
       const reports = this.reports();
       if (!this.ready()) return;
       void this.renderMarkers(reports);
+    });
+
+    // Cambia el estilo del mapa al alternar el tema. Los marcadores son
+    // overlays del DOM, así que sobreviven a setStyle.
+    effect(() => {
+      const theme = this.themeService.theme();
+      if (!this.map || !this.ready()) return;
+      this.map.setStyle(buildStyle(theme));
     });
   }
 
@@ -101,17 +110,28 @@ export class MapView {
   }
 }
 
-/** Estilo raster con tiles de OpenStreetMap (sin token). Para producción,
- *  considera un proveedor de tiles propio o con plan adecuado. */
-const OSM_STYLE = {
-  version: 8 as const,
-  sources: {
-    osm: {
-      type: 'raster' as const,
-      tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-      tileSize: 256,
-      attribution: '© OpenStreetMap',
+/** Estilo raster con basemaps de Carto (claro/oscuro) + capa de fondo para que
+ *  el mapa nunca se vea negro mientras cargan los tiles. Gratis con atribución. */
+function buildStyle(theme: Theme): StyleSpecification {
+  const variant = theme === 'dark' ? 'dark_all' : 'light_all';
+  const bg = theme === 'dark' ? '#0b1120' : '#e5e7eb';
+  return {
+    version: 8,
+    sources: {
+      carto: {
+        type: 'raster',
+        tiles: [
+          `https://a.basemaps.cartocdn.com/${variant}/{z}/{x}/{y}.png`,
+          `https://b.basemaps.cartocdn.com/${variant}/{z}/{x}/{y}.png`,
+          `https://c.basemaps.cartocdn.com/${variant}/{z}/{x}/{y}.png`,
+        ],
+        tileSize: 256,
+        attribution: '© OpenStreetMap, © CARTO',
+      },
     },
-  },
-  layers: [{ id: 'osm', type: 'raster' as const, source: 'osm' }],
-};
+    layers: [
+      { id: 'bg', type: 'background', paint: { 'background-color': bg } },
+      { id: 'carto', type: 'raster', source: 'carto' },
+    ],
+  };
+}

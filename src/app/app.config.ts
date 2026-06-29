@@ -24,6 +24,8 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: Aura,
         options: {
+          // Tema oscuro MANUAL (clase .app-dark), no sigue el tema del sistema.
+          darkModeSelector: '.app-dark',
           cssLayer: {
             name: 'primeng',
             order: 'theme, base, primeng',
