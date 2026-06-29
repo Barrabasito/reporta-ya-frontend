@@ -4,6 +4,41 @@
 /* Iconos de PrimeNG */
 @import 'primeicons/primeicons.css';
 
+/* Estilos del mapa MapLibre */
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
 /* El tema de PrimeNG se inyecta en la capa `primeng` (ver providePrimeNG en
    app.config.ts). El orden de capas garantiza que las utilidades de Tailwind
    puedan sobrescribir los estilos de los componentes de PrimeNG. */
+
+html,
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Pin de reporte en el mapa */
+.report-pin {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.maplibregl-popup-content {
+  border-radius: 0.5rem;
+  font-family: inherit;
+}
+.popup-link {
+  color: #4f46e5;
+  font-weight: 600;
+  text-decoration: none;
+}

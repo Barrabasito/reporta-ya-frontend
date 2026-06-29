@@ -7,6 +7,8 @@ import Aura from '@primeng/themes/aura';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
+import { API_BASE_URL } from './core/api.token';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,5 +32,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideClientHydration(),
+    { provide: API_BASE_URL, useValue: environment.apiBaseUrl },
   ],
 };

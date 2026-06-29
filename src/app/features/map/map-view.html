@@ -1,0 +1,33 @@
+<section class="relative h-[calc(100vh-4rem)] w-full">
+  <!-- Contenedor del mapa -->
+  <div #map class="absolute inset-0"></div>
+
+  <!-- Panel flotante de resumen -->
+  <div
+    class="absolute top-4 left-4 z-10 rounded-xl bg-white/95 shadow-lg backdrop-blur px-4 py-3 max-w-xs"
+  >
+    <p class="text-sm font-semibold text-slate-700">
+      {{ count() }} reporte(s) activo(s)
+    </p>
+    @if (oldest() > 0) {
+      <p class="text-xs text-slate-500">
+        El más antiguo lleva {{ oldest() }} días sin atender
+      </p>
+    }
+    <div class="mt-2 flex items-center gap-2 text-[11px] text-slate-500">
+      <span class="inline-flex items-center gap-1"><span class="size-2 rounded-full" style="background:#22c55e"></span>nuevo</span>
+      <span class="inline-flex items-center gap-1"><span class="size-2 rounded-full" style="background:#eab308"></span>+3d</span>
+      <span class="inline-flex items-center gap-1"><span class="size-2 rounded-full" style="background:#f97316"></span>+7d</span>
+      <span class="inline-flex items-center gap-1"><span class="size-2 rounded-full" style="background:#ef4444"></span>+30d</span>
+    </div>
+  </div>
+
+  <!-- Botón de acción principal -->
+  <p-button
+    routerLink="/reportar"
+    label="Reportar"
+    icon="pi pi-plus"
+    styleClass="!absolute bottom-6 right-6 z-10 shadow-lg"
+    severity="danger"
+  />
+</section>
