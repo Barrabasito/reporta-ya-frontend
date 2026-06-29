@@ -6,7 +6,10 @@ Instrucciones para cualquier agente de IA (Claude Code, etc.) que trabaje en est
 
 - **Angular 22** (standalone, **zoneless** — sin `zone.js`).
 - **TypeScript** estricto.
-- Estilos en **SCSS**.
+- Estilos en **CSS** (no SCSS).
+- **Tailwind CSS v4** para utilidades/layout (configurado vía `@tailwindcss/postcss` en `.postcssrc.json`; `@import 'tailwindcss'` en `src/styles.css`).
+- **PrimeNG 21** para componentes UI, con el tema **Aura** (`@primeng/themes`) configurado en `src/app/app.config.ts`. El `cssLayer` está ordenado para que las utilidades de Tailwind puedan sobrescribir a PrimeNG.
+- **PrimeIcons** (`primeicons`) para iconografía — usa clases `pi pi-*` (p. ej. `<i class="pi pi-check"></i>`).
 
 ## Reglas de arquitectura — OBLIGATORIAS
 

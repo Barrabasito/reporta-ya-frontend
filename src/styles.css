@@ -1,0 +1,9 @@
+/* Tailwind CSS v4 */
+@import 'tailwindcss';
+
+/* Iconos de PrimeNG */
+@import 'primeicons/primeicons.css';
+
+/* El tema de PrimeNG se inyecta en la capa `primeng` (ver providePrimeNG en
+   app.config.ts). El orden de capas garantiza que las utilidades de Tailwind
+   puedan sobrescribir los estilos de los componentes de PrimeNG. */
