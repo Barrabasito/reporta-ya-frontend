@@ -26,9 +26,20 @@ export function ageLabel(days: number): string {
   return months === 1 ? 'hace 1 mes' : `hace ${months} meses`;
 }
 
+/**
+ * Redondea la coordenada para PROTEGER la privacidad: la "difumina" a ~110 m
+ * (3 decimales). Así no se guarda la posición exacta de quien reporta.
+ * Aplícalo SIEMPRE antes de almacenar/enviar una ubicación.
+ */
+export function roundApprox(p: GeoPoint): GeoPoint {
+  return {
+    lat: Math.round(p.lat * 1000) / 1000,
+    lng: Math.round(p.lng * 1000) / 1000,
+  };
+}
+
 /** Etiqueta de dirección aproximada (privacidad: no exacta). */
 export function approxAddress(p: GeoPoint): string {
-  const lat = p.lat.toFixed(3);
-  const lng = p.lng.toFixed(3);
-  return `Aprox. ${lat}, ${lng}`;
+  const { lat, lng } = roundApprox(p);
+  return `Aprox. ${lat.toFixed(3)}, ${lng.toFixed(3)}`;
 }

@@ -1,6 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { CreateReportInput, Report, ReportCategory } from './models/report';
-import { approxAddress } from './geo';
+import { approxAddress, roundApprox } from './geo';
 
 /**
  * Store de reportes — IMPLEMENTACIÓN MOCK en memoria (datos ficticios).
@@ -37,11 +37,13 @@ export class ReportsStore {
   }
 
   create(input: CreateReportInput): Report {
+    const location = roundApprox(input.location);
     const report: Report = {
       id: newId(),
       folio: newFolio(),
       ...input,
-      address: input.address ?? approxAddress(input.location),
+      location,
+      address: input.address ?? approxAddress(location),
       status: 'nuevo',
       confirmations: 0,
       createdAt: new Date().toISOString(),

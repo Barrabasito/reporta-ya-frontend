@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { ReportsStore } from '../../core/reports.store';
-import { DEFAULT_CENTER, approxAddress } from '../../core/geo';
+import { DEFAULT_CENTER, approxAddress, roundApprox } from '../../core/geo';
 import { CATEGORY_META, GeoPoint, ReportCategory } from '../../core/models/report';
 
 type Step = 1 | 2 | 3;
@@ -82,7 +82,8 @@ export class ReportForm {
     this.locating.set(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        this.location.set({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        // Difuminamos la coordenada (~110 m) antes de guardarla: nunca exacta.
+        this.location.set(roundApprox({ lat: pos.coords.latitude, lng: pos.coords.longitude }));
         this.locating.set(false);
       },
       () => {
