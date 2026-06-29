@@ -39,6 +39,7 @@ export class ReportsStore {
   create(input: CreateReportInput): Report {
     const report: Report = {
       id: newId(),
+      folio: newFolio(),
       ...input,
       address: input.address ?? approxAddress(input.location),
       status: 'nuevo',
@@ -64,6 +65,14 @@ function newId(): string {
   return 'r-' + Date.now().toString(36);
 }
 
+let folioSeq = 0;
+function newFolio(): string {
+  const year = new Date().getFullYear();
+  // 4 dígitos derivados del tiempo + secuencia (mock, sin Math.random).
+  const n = (Date.now() + folioSeq++) % 10000;
+  return `RY-${year}-${n.toString().padStart(4, '0')}`;
+}
+
 /** Datos ficticios sembrados alrededor de Torreón con IDs estables. */
 function seedReports(): Report[] {
   const daysAgo = (d: number) => new Date(Date.now() - d * 86_400_000).toISOString();
@@ -77,6 +86,7 @@ function seedReports(): Report[] {
     description?: string,
   ): Report => ({
     id: `demo-${n}`,
+    folio: `RY-2026-${(1000 + n).toString()}`,
     category,
     description,
     location: { lat, lng },

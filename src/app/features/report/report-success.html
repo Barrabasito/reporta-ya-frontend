@@ -1,0 +1,32 @@
+<section class="mx-auto max-w-md px-4 pt-8 pb-24 text-center md:pb-10">
+  <div class="mx-auto grid size-20 place-items-center rounded-2xl bg-green-500 text-white shadow-lg shadow-green-500/30">
+    <i class="pi pi-check text-4xl"></i>
+  </div>
+
+  <h1 class="mt-5 text-2xl font-bold text-slate-800 dark:text-slate-100">
+    Reporte enviado<br />anónimamente
+  </h1>
+  <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+    Tu aporte ayuda a mejorar la ciudad. ¡Gracias por participar!
+  </p>
+
+  @if (report(); as r) {
+    <!-- Folio -->
+    <div class="mt-6 rounded-xl border border-slate-200 bg-slate-50 py-3 dark:border-slate-800 dark:bg-slate-900">
+      <p class="text-[11px] uppercase tracking-widest text-slate-400">Folio único</p>
+      <p class="font-mono text-lg font-bold tracking-wider text-indigo-500">{{ r.folio }}</p>
+    </div>
+
+    <!-- Tarjeta del reporte -->
+    <div class="mt-5 text-left">
+      <app-report-card [report]="r" />
+    </div>
+
+    <div class="mt-6 flex gap-3">
+      <p-button routerLink="/" label="Ver en el mapa" icon="pi pi-map" [outlined]="true" styleClass="flex-1" />
+      <p-button [routerLink]="['/reporte', r.id]" label="Ver ficha" icon="pi pi-arrow-right" severity="danger" styleClass="flex-1" />
+    </div>
+  } @else {
+    <p-button routerLink="/" label="Ir al mapa" styleClass="mt-6" />
+  }
+</section>

@@ -28,6 +28,8 @@ export type ReportStatus = 'nuevo' | 'en_proceso' | 'resuelto';
 /** Un reporte tal como lo devuelve el backend. */
 export interface Report {
   id: string;
+  /** Folio público legible, p. ej. "RY-2026-8842". */
+  folio: string;
   category: ReportCategory;
   description?: string;
   location: GeoPoint;
@@ -39,6 +41,7 @@ export interface Report {
   /** ISO 8601, p. ej. "2026-06-29T18:00:00Z". */
   createdAt: string;
   updatedAt?: string;
+  /** Evidencia (en el mock, un data URL; con backend, una URL remota). */
   photoUrl?: string;
 }
 
@@ -48,6 +51,7 @@ export interface CreateReportInput {
   description?: string;
   location: GeoPoint;
   address?: string;
+  photoUrl?: string;
 }
 
 /** Metadatos de presentación por categoría (icono PrimeIcons + etiqueta). */

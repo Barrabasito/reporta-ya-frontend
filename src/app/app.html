@@ -1,32 +1,77 @@
 <header
-  class="h-16 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+  class="sticky top-0 z-30 h-16 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90"
 >
   <div class="mx-auto flex h-full max-w-6xl items-center justify-between px-4">
-    <a
-      routerLink="/"
-      class="flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-slate-100"
-    >
+    <a routerLink="/" class="flex items-center gap-2 text-lg font-bold">
       <i class="pi pi-flag text-indigo-500"></i>
-      {{ brand() }}
+      <span class="text-slate-800 dark:text-slate-100">Reporta<span class="text-indigo-500">Ya</span></span>
     </a>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1">
       <button
         type="button"
         (click)="toggleTheme()"
-        [attr.aria-label]="isDark() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+        [attr.aria-label]="isDark() ? 'Tema claro' : 'Tema oscuro'"
         class="grid size-10 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
       >
         <i [class]="isDark() ? 'pi pi-sun' : 'pi pi-moon'"></i>
       </button>
       <a
         routerLink="/reportar"
-        class="rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+        class="hidden rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 md:inline-block"
       >
         Reportar
       </a>
+      <span class="grid size-9 place-items-center rounded-full bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-300">
+        <i class="pi pi-user text-sm"></i>
+      </span>
     </div>
   </div>
 </header>
 
-<router-outlet />
+<main>
+  <router-outlet />
+</main>
+
+<!-- Bottom-nav (solo móvil, oculto en flujos enfocados) -->
+@if (!chromeless()) {
+<nav
+  class="fixed inset-x-0 bottom-0 z-30 flex h-16 items-center justify-around border-t border-slate-200 bg-white px-2 dark:border-slate-800 dark:bg-slate-900 md:hidden"
+>
+  <a
+    routerLink="/"
+    routerLinkActive="text-indigo-500"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="flex flex-1 flex-col items-center gap-0.5 text-slate-400"
+  >
+    <i class="pi pi-map text-lg"></i>
+    <span class="text-[10px] font-medium">Mapa</span>
+  </a>
+  <a
+    routerLink="/reportes"
+    routerLinkActive="text-indigo-500"
+    class="flex flex-1 flex-col items-center gap-0.5 text-slate-400"
+  >
+    <i class="pi pi-list text-lg"></i>
+    <span class="text-[10px] font-medium">Reportes</span>
+  </a>
+
+  <!-- FAB central -->
+  <a
+    routerLink="/reportar"
+    class="-mt-6 grid size-14 shrink-0 place-items-center rounded-full bg-red-500 text-white shadow-lg shadow-red-500/30 hover:bg-red-600"
+    aria-label="Nuevo reporte"
+  >
+    <i class="pi pi-plus text-xl"></i>
+  </a>
+
+  <span class="flex flex-1 flex-col items-center gap-0.5 text-slate-300 dark:text-slate-600">
+    <i class="pi pi-bell text-lg"></i>
+    <span class="text-[10px] font-medium">Alertas</span>
+  </span>
+  <span class="flex flex-1 flex-col items-center gap-0.5 text-slate-300 dark:text-slate-600">
+    <i class="pi pi-user text-lg"></i>
+    <span class="text-[10px] font-medium">Perfil</span>
+  </span>
+</nav>
+}

@@ -41,6 +41,14 @@ export class MapView {
     return Math.max(...list.map((r) => daysSince(r.createdAt)));
   });
 
+  /** Reportes más recientes para el bottom-sheet. */
+  protected readonly recent = computed(() =>
+    [...this.reports()].sort((a, b) => daysSince(a.createdAt) - daysSince(b.createdAt)).slice(0, 6),
+  );
+  protected readonly meta = CATEGORY_META;
+  protected readonly ageColorFn = ageColor;
+  protected readonly daysSinceFn = daysSince;
+
   constructor() {
     // Inicializa MapLibre solo en cliente (afterNextRender no corre en SSR).
     afterNextRender(async () => {

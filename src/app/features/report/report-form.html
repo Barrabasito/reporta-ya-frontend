@@ -1,75 +1,197 @@
-<section class="mx-auto max-w-lg px-4 py-8">
-  <a routerLink="/" class="text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 inline-flex items-center gap-1">
-    <i class="pi pi-arrow-left"></i> Volver al mapa
-  </a>
+<section class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col px-4 py-5">
+  <!-- Encabezado con cerrar -->
+  <div class="flex items-center gap-3">
+    <button
+      type="button"
+      (click)="back()"
+      class="grid size-9 place-items-center rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+      aria-label="Atrás"
+    >
+      <i [class]="step() === 1 ? 'pi pi-times' : 'pi pi-arrow-left'"></i>
+    </button>
+    <h1 class="text-lg font-bold text-slate-800 dark:text-slate-100">Nuevo reporte</h1>
+  </div>
 
-  <h1 class="mt-4 text-2xl font-bold text-slate-800 dark:text-slate-100">Nuevo reporte</h1>
-  <p class="text-slate-500 dark:text-slate-400 text-sm">Anónimo. Sin cuenta. Solo dinos qué y dónde.</p>
+  <!-- Indicador de pasos -->
+  <div class="mt-5 flex items-center">
+    @for (s of steps; track s.n) {
+      <div class="flex flex-1 flex-col items-center">
+        <div class="flex w-full items-center">
+          <div class="h-0.5 flex-1" [class.bg-transparent]="s.n === 1"
+               [class.bg-indigo-500]="s.n !== 1 && step() >= s.n"
+               [class.bg-slate-200]="s.n !== 1 && step() < s.n"
+               [class.dark:bg-slate-700]="s.n !== 1 && step() < s.n"></div>
+          <div
+            class="grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold transition-colors"
+            [class.bg-indigo-500]="step() >= s.n"
+            [class.text-white]="step() >= s.n"
+            [class.bg-slate-200]="step() < s.n"
+            [class.text-slate-500]="step() < s.n"
+            [class.dark:bg-slate-700]="step() < s.n"
+          >
+            @if (step() > s.n) { <i class="pi pi-check text-[10px]"></i> } @else { {{ s.n }} }
+          </div>
+          <div class="h-0.5 flex-1" [class.bg-transparent]="s.n === 3"
+               [class.bg-indigo-500]="s.n !== 3 && step() > s.n"
+               [class.bg-slate-200]="s.n !== 3 && step() <= s.n"
+               [class.dark:bg-slate-700]="s.n !== 3 && step() <= s.n"></div>
+        </div>
+        <span class="mt-1 text-[11px]" [class.text-indigo-500]="step() >= s.n"
+              [class.font-semibold]="step() >= s.n"
+              [class.text-slate-400]="step() < s.n">{{ s.label }}</span>
+      </div>
+    }
+  </div>
 
-  <div class="mt-6 space-y-6">
-    <!-- Categoría -->
-    <div>
-      <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">¿Qué quieres reportar?</label>
-      <p-select
-        [options]="categories"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Elige una categoría"
-        [ngModel]="category()"
-        (ngModelChange)="category.set($event)"
-        styleClass="w-full"
-      >
-        <ng-template #item let-opt>
-          <span class="inline-flex items-center gap-2"><i [class]="opt.icon"></i>{{ opt.label }}</span>
-        </ng-template>
-      </p-select>
-      @if (submitted() && !category()) {
-        <small class="text-red-500">Selecciona una categoría.</small>
+  <!-- Contenido del paso -->
+  <div class="mt-6 flex-1">
+    @switch (step()) {
+      @case (1) {
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">¿Cuál es el problema?</h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Elige la categoría que mejor lo describa.
+        </p>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          @for (c of categories; track c.value) {
+            <button
+              type="button"
+              (click)="select(c.value)"
+              class="flex flex-col items-center gap-2 rounded-xl border p-4 transition-all"
+              [class.border-indigo-500]="category() === c.value"
+              [class.ring-2]="category() === c.value"
+              [class.ring-indigo-200]="category() === c.value"
+              [class.bg-indigo-50]="category() === c.value"
+              [class.dark:bg-indigo-500/10]="category() === c.value"
+              [class.border-slate-200]="category() !== c.value"
+              [class.dark:border-slate-700]="category() !== c.value"
+            >
+              <i [class]="c.icon" class="text-2xl text-indigo-500"></i>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ c.label }}</span>
+            </button>
+          }
+        </div>
+
+        <!-- Evidencia -->
+        <h3 class="mt-6 text-sm font-semibold text-slate-700 dark:text-slate-200">
+          Evidencia <span class="font-normal text-slate-400">(opcional)</span>
+        </h3>
+        @if (photo(); as p) {
+          <div class="relative mt-2 overflow-hidden rounded-xl">
+            <img [src]="p" alt="Evidencia" class="h-40 w-full object-cover" />
+            <button
+              type="button"
+              (click)="removePhoto()"
+              class="absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-black/60 text-white"
+              aria-label="Quitar"
+            >
+              <i class="pi pi-trash"></i>
+            </button>
+          </div>
+        } @else {
+          <label
+            class="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 text-slate-400 hover:border-indigo-400 dark:border-slate-700"
+          >
+            <i class="pi pi-camera text-2xl"></i>
+            <span class="text-sm font-medium">Adjuntar evidencia</span>
+            <span class="text-xs">Foto desde tu dispositivo</span>
+            <input type="file" accept="image/*" class="hidden" (change)="onPhoto($event)" />
+          </label>
+        }
       }
-    </div>
 
-    <!-- Ubicación -->
-    <div>
-      <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Ubicación</label>
+      @case (2) {
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">¿Dónde está?</h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Tomamos una posición aproximada, nunca tu dirección exacta.
+        </p>
+
+        <div class="mt-6 rounded-xl border border-slate-200 p-5 text-center dark:border-slate-700">
+          <i class="pi pi-map-marker text-4xl"
+             [class.text-indigo-500]="addressLabel()"
+             [class.text-slate-300]="!addressLabel()"></i>
+          <p class="mt-3 font-medium text-slate-700 dark:text-slate-200">
+            {{ addressLabel() ?? 'Sin ubicación todavía' }}
+          </p>
+          <p-button
+            [label]="addressLabel() ? 'Actualizar ubicación' : 'Usar mi ubicación'"
+            [icon]="locating() ? 'pi pi-spin pi-spinner' : 'pi pi-compass'"
+            [outlined]="!!addressLabel()"
+            [disabled]="locating()"
+            (onClick)="locate()"
+            styleClass="mt-4 w-full"
+          />
+        </div>
+      }
+
+      @case (3) {
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Revisa y publica</h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Tu reporte será anónimo y público.
+        </p>
+
+        <div class="mt-4 space-y-4 rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+          <div class="flex items-center gap-3">
+            <span class="grid size-10 place-items-center rounded-full bg-indigo-50 text-indigo-500 dark:bg-indigo-500/10">
+              <i [class]="category() ? meta[category()!].icon : 'pi pi-question'"></i>
+            </span>
+            <div>
+              <p class="text-xs text-slate-400">Categoría</p>
+              <p class="font-medium text-slate-800 dark:text-slate-100">
+                {{ category() ? meta[category()!].label : '—' }}
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="grid size-10 place-items-center rounded-full bg-slate-100 text-slate-500 dark:bg-slate-800">
+              <i class="pi pi-map-marker"></i>
+            </span>
+            <div>
+              <p class="text-xs text-slate-400">Ubicación</p>
+              <p class="font-medium text-slate-800 dark:text-slate-100">{{ addressLabel() }}</p>
+            </div>
+          </div>
+          @if (photo(); as p) {
+            <img [src]="p" alt="Evidencia" class="h-32 w-full rounded-lg object-cover" />
+          }
+        </div>
+
+        <label class="mt-4 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          Descripción <span class="font-normal text-slate-400">(opcional)</span>
+        </label>
+        <textarea
+          pTextarea
+          [ngModel]="description()"
+          (ngModelChange)="description.set($event)"
+          rows="3"
+          maxlength="280"
+          placeholder="Describe brevemente el problema…"
+          class="mt-1 w-full"
+        ></textarea>
+      }
+    }
+  </div>
+
+  <!-- Acciones (sticky abajo) -->
+  <div class="sticky bottom-0 mt-4 bg-linear-to-t from-white via-white pb-2 pt-3 dark:from-slate-950 dark:via-slate-950">
+    @if (step() < 3) {
       <p-button
-        [label]="addressLabel() ?? 'Usar mi ubicación'"
-        [icon]="locating() ? 'pi pi-spin pi-spinner' : 'pi pi-map-marker'"
-        [outlined]="!addressLabel()"
-        [disabled]="locating()"
-        (onClick)="locate()"
+        label="Continuar"
+        icon="pi pi-arrow-right"
+        iconPos="right"
+        severity="danger"
+        [disabled]="(step() === 1 && !category()) || (step() === 2 && !location())"
+        (onClick)="next()"
         styleClass="w-full"
       />
-      <p class="mt-1 text-xs text-slate-400">
-        Guardamos una posición aproximada, nunca tu dirección exacta.
-      </p>
-      @if (submitted() && !location()) {
-        <small class="text-red-500">Necesitamos la ubicación del problema.</small>
-      }
-    </div>
-
-    <!-- Descripción -->
-    <div>
-      <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-        Descripción <span class="text-slate-400 font-normal">(opcional)</span>
-      </label>
-      <textarea
-        pTextarea
-        [ngModel]="description()"
-        (ngModelChange)="description.set($event)"
-        rows="3"
-        maxlength="280"
-        placeholder="Describe brevemente el problema…"
-        class="w-full"
-      ></textarea>
-    </div>
-
-    <p-button
-      label="Publicar reporte"
-      icon="pi pi-send"
-      severity="danger"
-      [disabled]="!canSubmit()"
-      (onClick)="submit()"
-      styleClass="w-full"
-    />
+    } @else {
+      <p-button
+        label="Publicar reporte"
+        icon="pi pi-send"
+        severity="danger"
+        (onClick)="submit()"
+        styleClass="w-full"
+      />
+    }
   </div>
 </section>

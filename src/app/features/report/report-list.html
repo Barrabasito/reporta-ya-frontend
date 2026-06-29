@@ -1,0 +1,32 @@
+<section class="mx-auto max-w-3xl px-4 pt-6 pb-24 md:pb-10">
+  <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">Reportes</h1>
+  <p class="text-sm text-slate-500 dark:text-slate-400">
+    {{ reports().length }} reporte(s) en tu ciudad
+  </p>
+
+  <!-- Búsqueda -->
+  <div class="relative mt-4">
+    <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+    <input
+      type="search"
+      [ngModel]="query()"
+      (ngModelChange)="query.set($event)"
+      placeholder="Buscar por categoría, zona o folio…"
+      class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-sm text-slate-700 outline-none focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+    />
+  </div>
+
+  <!-- Grid -->
+  @if (reports().length) {
+    <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      @for (r of reports(); track r.id) {
+        <app-report-card [report]="r" />
+      }
+    </div>
+  } @else {
+    <div class="mt-12 text-center text-slate-400">
+      <i class="pi pi-inbox text-4xl"></i>
+      <p class="mt-2 text-sm">No encontramos reportes con esa búsqueda.</p>
+    </div>
+  }
+</section>
